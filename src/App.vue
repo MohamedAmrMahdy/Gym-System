@@ -75,13 +75,7 @@ export default {
               icon: "add_circle",
               title: "Add",
               subtitle: "Add A New Customer",
-              path: "/customers/add"
-            },
-            {
-              icon: "remove_circle",
-              title: "Remove",
-              subtitle: "Remove Customer",
-              path: "/customers/remove"
+              path: { name: 'customers', params: { addUser: true }}
             }
           ]
         },
@@ -95,13 +89,7 @@ export default {
               icon: "add_circle",
               title: "Add",
               subtitle: "Add A New Staff",
-              path: "/staff/add"
-            },
-            {
-              icon: "remove_circle",
-              title: "Remove",
-              subtitle: "Remove Staff",
-              path: "/staff/remove"
+              path: { name: 'staff', params: { addUser: true }}
             }
           ]
         }
