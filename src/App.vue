@@ -21,7 +21,7 @@
         </template>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar dark fixed app clipped-left color="primary elevation-5" style="border-bottom-left-radius: 20px">
+    <v-toolbar dark fixed app clipped-left color="primary elevation-5" style="border-bottom-left-radius: 30px">
         
         <v-toolbar-side-icon >
           <v-icon >fitness_center</v-icon>
