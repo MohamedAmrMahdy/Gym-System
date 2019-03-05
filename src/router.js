@@ -44,7 +44,7 @@ export default new Router({
     },
     {
       path: '/about',
-      name: 'about us',
+      name: 'about System',
       component: () => import('./views/About.vue')
     },
     {
