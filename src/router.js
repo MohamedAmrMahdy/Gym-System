@@ -2,17 +2,26 @@ import Vue from "vue";
 import Router from "vue-router";
 import DashBoard from "./views/DashboardLayout.vue";
 import LoginPage from "./views/Login.vue";
+import store from './store';
 
 Vue.use(Router);
 
-export default new Router({
+let router = new Router({
   mode: "history",
   routes: [
+    { path: "/", 
+      redirect: '/dashboard',
+      meta: {
+        requiresAuth: true
+      } 
+    },
     { path: "/login", name: "Login Page", component: LoginPage },
     {
       path: "/dashboard",
-      name: "DashBoard Layout",
       component: DashBoard,
+      meta: {
+        requiresAuth: true
+      },
       children: [
         {
           path: "/",
@@ -35,9 +44,9 @@ export default new Router({
           component: () => import("./views/Subscriptions.vue")
         },
         {
-          path: "staff",
-          name: "Staff",
-          component: () => import("./views/Staff.vue")
+          path: "cashiers",
+          name: "Cashiers",
+          component: () => import("./views/Cashier.vue")
         },
         {
           path: "documentation",
@@ -63,3 +72,17 @@ export default new Router({
     }
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.getters.isLoggedIn) {
+      next();
+      return;
+    }
+    next("/login");
+  } else {
+    next();
+  }
+});
+
+export default router;

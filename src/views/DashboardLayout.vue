@@ -34,7 +34,7 @@
           <v-icon >refresh</v-icon>
         </v-btn>
         <v-btn icon>
-          <v-icon>exit_to_app</v-icon>
+          <v-icon @click="logout">exit_to_app</v-icon>
         </v-btn>
     </v-toolbar>
     <v-content>
@@ -67,6 +67,12 @@ export default {
           header: "Main Control"
         },
         {
+          icon: "work",
+          title: "Cashiers",
+          subtitle: "Shows All Cashiers",
+          path: "/dashboard/cashiers"
+        },
+        {
           icon: "people",
           title: "Customers",
           subtitle: "shows All Customers",
@@ -77,12 +83,6 @@ export default {
           title: "subscriptions",
           subtitle: "shows subscriptions types",
           path: "/dashboard/subscriptions"
-        },
-        {
-          icon: "work",
-          title: "Staff",
-          subtitle: "Shows All Staff Members",
-          path: "/dashboard/staff"
         },
         {
           divider: true
@@ -116,6 +116,13 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    logout: function() {
+      this.$store.dispatch("logout").then(() => {
+        this.$router.push("/login");
+      });
+    }
   }
 };
 </script>
