@@ -2,7 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import DashBoard from "./views/DashboardLayout.vue";
 import LoginPage from "./views/Login.vue";
-import store from './store';
+import store from './store/index';
 
 Vue.use(Router);
 
@@ -75,7 +75,7 @@ let router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.getters.isLoggedIn) {
+    if (store.getters['apiAuth/isLoggedIn']) {
       next();
       return;
     }

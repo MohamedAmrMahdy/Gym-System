@@ -38,14 +38,14 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="red" flat @click="close">Close</v-btn>
-            <v-btn color="blue" flat :loading="this.$store.getters.status == 'loading'" :disabled="this.$store.getters.status == 'loading'" @click="pushCashier">{{formButton}}</v-btn>
+            <v-btn color="blue" flat :loading="this.$store.getters['apiCashier/status'] == 'loading'" :disabled="!this.$store.getters['apiCashier/status']" @click="pushCashier">{{formButton}}</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
       <v-data-table
         :headers="headers"
         :items="cashiers"
-        :loading="this.$store.getters.status == 'loading'"
+        :loading="this.$store.getters['apiCashier/status'] == 'loading'"
         class="elevation-1"
       >
         <template v-slot:items="props">
@@ -148,7 +148,7 @@ export default {
       return this.editedID === "-1" ? 'Add' : 'Edit'
     },
     cashiers: function() {
-      return this.$store.getters.cashiers;
+      return this.$store.getters['apiCashier/cashiers'];
     }
   },
   created () {
@@ -157,7 +157,7 @@ export default {
   methods: {
     initialize: function(){
       this.$store
-        .dispatch("getCashiers")
+        .dispatch('apiCashier/getCashiers')
         .then(() => this.close())
         .catch(err => console.log(err));
     },
@@ -170,19 +170,19 @@ export default {
       this.loading = true;
       if(this.editedID === "-1"){
         this.$store
-          .dispatch("addCashier", this.editedItem)
+          .dispatch('apiCashier/addCashier', this.editedItem)
           .then(() => {this.close();this.initialize();})
           .catch(err => console.log(err));
       }else{
         this.$store
-          .dispatch("editCashier", this.editedItem)
+          .dispatch('apiCashier/editCashier', this.editedItem)
           .then(() => this.close(this.initialize()))
           .catch(err => console.log(err));
       }
     },
     deleteCashier: function() {
       this.$store
-          .dispatch("deleteCashier", this.editedItem)
+          .dispatch('apiCashier/deleteCashier', this.editedItem)
           .then(() => {this.initialize()})
           .catch(err => console.log(err));
     },

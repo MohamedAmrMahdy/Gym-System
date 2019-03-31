@@ -32,8 +32,8 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   color="primary"
-                  :loading="this.$store.getters.status == 'loading'"
-                  :disabled="this.$store.getters.status == 'loading'"
+                  :loading="this.$store.getters['apiAuth/status'] == 'loading'"
+                  :disabled="this.$store.getters['apiAuth/status'] == 'loading'"
                   @click="login"
                 >Login</v-btn>
               </v-card-actions>
@@ -77,7 +77,7 @@ export default {
       let username = this.username;
       let password = this.password;
       this.$store
-        .dispatch("login", { username, password })
+        .dispatch('apiAuth/login', { username, password })
         .then(() => {
           this.$router.push("/")
         })
