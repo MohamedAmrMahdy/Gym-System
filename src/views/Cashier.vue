@@ -4,10 +4,14 @@
       
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on }">
-          <v-btn color="blue" class="white--text" v-on="on">
-            Add Cashier
-            <v-icon right dark>add</v-icon>
-          </v-btn>
+          <v-layout>
+            <v-flex xs2>
+              <v-btn color="blue" class="white--text" v-on="on">
+                Add Cashier
+                <v-icon right dark>add</v-icon>
+              </v-btn>
+            </v-flex>
+          </v-layout>
         </template>
         <v-card>
           <v-card-title>
@@ -171,20 +175,100 @@ export default {
       if(this.editedID === "-1"){
         this.$store
           .dispatch('apiCashier/addCashier', this.editedItem)
-          .then(() => {this.close();this.initialize();})
-          .catch(err => console.log(err));
+          .then(() => {
+            this.close();
+            this.initialize();
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Added Cashier Successfully",
+              snackbarTimeout: 5000,
+              color: "success",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          })
+          .catch(err => {
+            console.log(err)
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Unkown error occured",
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          });
       }else{
         this.$store
           .dispatch('apiCashier/editCashier', this.editedItem)
-          .then(() => this.close(this.initialize()))
-          .catch(err => console.log(err));
+          .then(() => {
+            this.close()
+            this.initialize()
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Edited Cashier Successfully",
+              snackbarTimeout: 5000,
+              color: "success",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          })
+          .catch(err => {
+            console.log(err)
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Unkown error occured",
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          });
       }
     },
     deleteCashier: function() {
       this.$store
           .dispatch('apiCashier/deleteCashier', this.editedItem)
-          .then(() => {this.initialize()})
-          .catch(err => console.log(err));
+          .then(() => {
+            this.initialize()
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Deleted Cashier Successfully",
+              snackbarTimeout: 5000,
+              color: "success",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          })
+          .catch(err => {
+            console.log(err)
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Unkown error occured",
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          });
     },
     editItem: function(item) {
       this.editedID = item.id

@@ -39,19 +39,7 @@
               </v-card-actions>
             </v-card>
           </v-flex>
-          <v-snackbar
-            v-model="snackbar"
-            :bottom="true"
-            :left="true"
-            :multi-line="false"
-            :right="false"
-            :timeout="snackbarTimeout"
-            :top="false"
-            :vertical="false"
-          >
-            {{ snackbarText }}
-            <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
-          </v-snackbar>
+          
         </v-layout>
       </v-container>
     </v-content>
@@ -63,9 +51,6 @@ export default {
   mounted() {},
   data: () => ({
     drawer: null,
-    snackbar: false,
-    snackbarTimeout: 5000,
-    snackbarText: "",
     username: "",
     password: ""
   }),
@@ -77,20 +62,61 @@ export default {
       let username = this.username;
       let password = this.password;
       this.$store
-        .dispatch('apiAuth/login', { username, password })
+        .dispatch("apiAuth/login", { username, password })
         .then(() => {
-          this.$router.push("/")
+          this.$router.push("/");
+          this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Welcome Back " + username,
+              snackbarTimeout: 5000,
+              color: "success",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
         })
         .catch(err => {
-          if(err.message == "Network Error"){
-            this.snackbarText = "Unable to reach server";
-          }else if(err.message == "Request failed with status code 401"){
-            this.snackbarText = "Wrong Username / Password"
-          }else{
-            this.snackbarText = "Unkown error occured"
+          if (err.message == "Network Error") {
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Unable to reach server",
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          } else if (err.message == "Request failed with status code 401") {
+            this.snackbarText = "Wrong Username / Password";
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Wrong Username / Password",
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          } else {
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Unkown error occured",
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
           }
-            this.snackbar = true;
-            console.log(err.message);
+          console.log(err.message);
         });
     }
   }

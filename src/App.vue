@@ -3,6 +3,20 @@
     <v-slide-y-transition mode="out-in">
     <router-view/>
     </v-slide-y-transition>
+    <v-snackbar
+            v-model="this.$store.getters['snackbar/snackbarState'].active"
+            :timeout="this.$store.getters['snackbar/snackbarState'].snackbarTimeout"
+            :color="this.$store.getters['snackbar/snackbarState'].color"
+            :left="this.$store.getters['snackbar/snackbarState'].left"
+            :right="this.$store.getters['snackbar/snackbarState'].right"
+            :bottom="this.$store.getters['snackbar/snackbarState'].bottom"
+            :top="this.$store.getters['snackbar/snackbarState'].top"
+            :multi-line="this.$store.getters['snackbar/snackbarState'].multiline"
+            :vertical="this.$store.getters['snackbar/snackbarState'].vertical"
+          >
+            {{ this.$store.getters['snackbar/snackbarState'].snackbarText }}
+            <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
+          </v-snackbar>
   </v-app>
 </template>
 <script>
