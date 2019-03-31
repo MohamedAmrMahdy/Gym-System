@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-container>
+      
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on }">
           <v-btn color="blue" class="white--text" v-on="on">
@@ -10,25 +11,25 @@
         </template>
         <v-card>
           <v-card-title>
-            <span class="headline">Add Cashier Account</span>
+            <span class="headline">{{ formTitle }}</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm6 md6>
-                  <v-text-field label="First name *" v-model="firstname" required></v-text-field>
+                  <v-text-field label="First name *" v-model="editedItem.firstName" required></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
-                  <v-text-field label="Last name *" v-model="lastname" required></v-text-field>
+                  <v-text-field label="Last name *" v-model="editedItem.lastName" required></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
-                  <v-text-field label="Phone Number *" v-model="phonenumber" required></v-text-field>
+                  <v-text-field label="Phone Number *" v-model="editedItem.phoneNumber" required></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
-                  <v-text-field label="Username *" v-model="username" required></v-text-field>
+                  <v-text-field label="Username *" v-model="editedItem.userName" required></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field label="Password *" v-model="password" type="password" required></v-text-field>
+                  <v-text-field v-if="editedID == '-1'" label="Password *" v-model="editedItem.Password" type="password" required></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -36,11 +37,43 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="red" flat @click="dialog = false">Close</v-btn>
-            <v-btn color="blue" flat :loading="loading" :disabled="loading" @click="AddCashier">Add</v-btn>
+            <v-btn color="red" flat @click="close">Close</v-btn>
+            <v-btn color="blue" flat :loading="this.$store.getters.status == 'loading'" :disabled="this.$store.getters.status == 'loading'" @click="pushCashier">{{formButton}}</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <v-data-table
+        :headers="headers"
+        :items="cashiers"
+        :loading="this.$store.getters.status == 'loading'"
+        class="elevation-1"
+      >
+        <template v-slot:items="props">
+          <td>{{ props.item.id }}</td>
+          <td>{{ props.item.firstName }}</td>
+          <td>{{ props.item.lastName }}</td>
+          <td>{{ props.item.userName }}</td>
+          <td>{{ props.item.phoneNumber }}</td>
+          <td >
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(props.item)"
+            >
+              edit
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteItem(props.item)"
+            >
+              delete
+            </v-icon>
+          </td>
+        </template>
+        <template v-slot:no-data>
+          <v-btn color="primary" @click="initialize">Reset</v-btn>
+        </template>
+      </v-data-table>
     </v-container>
   </v-app>
 </template>
@@ -49,28 +82,121 @@ export default {
   name: "App",
   data() {
     return {
-      firstname: "",
-      lastname: "",
-      username: "",
-      password: "",
-      phonenumber: "",
       dialog: false,
-      loading: false
+      loading: false,
+      headers: [
+      {
+        text: 'Cashier ID',
+        align: 'left',
+        sortable: false,
+        value: 'id'
+      },
+      {
+        text: 'First Name',
+        align: 'left',
+        sortable: false,
+        value: 'firstName'
+      },
+      {
+        text: 'Last Name',
+        align: 'left',
+        sortable: false,
+        value: 'lastName'
+      },
+      {
+        text: 'Username',
+        align: 'left',
+        sortable: false,
+        value: 'userName'
+      },
+      {
+        text: 'Phone Number',
+        align: 'left',
+        sortable: false,
+        value: 'phoneNumber'
+      },
+      { text: 'Actions',
+        align: 'left', 
+        value: 'name', 
+        sortable: false 
+        }
+    ],
+      editedID: "-1",
+      editedItem: {
+        id: "",
+        firstName: "",
+        lastName: "",
+        userName: "",
+        Password: "",
+        phoneNumber: "",
+      },
+      defaultItem: {
+        id: "test",
+        firstName: "",
+        lastName: "",
+        userName: "",
+        Password: "",
+        phoneNumber: "",
+      }
     };
   },
-  methods: {
-    AddCashier: function() {
-      this.loading = true;
-      let FirstName = this.firstname;
-      let LastName = this.lastname;
-      let UserName = this.username;
-      let Password = this.password;
-      let PhoneNumber = this.phonenumber;
-      this.$store
-        .dispatch("addCashier", { UserName, Password, FirstName, LastName, PhoneNumber })
-        .then(() => this.dialog = false)
-        .catch(err => console.log(err));
+  computed: {
+    formTitle () {
+      return this.editedID === "-1" ? 'Add Cashier' : 'Edit Cashier'
+    },
+    formButton () {
+      return this.editedID === "-1" ? 'Add' : 'Edit'
+    },
+    cashiers: function() {
+      return this.$store.getters.cashiers;
     }
+  },
+  created () {
+    this.initialize()
+  },
+  methods: {
+    initialize: function(){
+      this.$store
+        .dispatch("getCashiers")
+        .then(() => this.close())
+        .catch(err => console.log(err));
+    },
+    close: function(){
+      this.dialog = false;
+      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedID = "-1";
+    },
+    pushCashier: function() {
+      this.loading = true;
+      if(this.editedID === "-1"){
+        this.$store
+          .dispatch("addCashier", this.editedItem)
+          .then(() => {this.close();this.initialize();})
+          .catch(err => console.log(err));
+      }else{
+        this.$store
+          .dispatch("editCashier", this.editedItem)
+          .then(() => this.close(this.initialize()))
+          .catch(err => console.log(err));
+      }
+    },
+    deleteCashier: function() {
+      this.$store
+          .dispatch("deleteCashier", this.editedItem)
+          .then(() => {this.initialize()})
+          .catch(err => console.log(err));
+    },
+    editItem: function(item) {
+      this.editedID = item.id
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+
+    deleteItem: function(item) {
+      this.editedID = item.id
+      this.editedItem = Object.assign({}, item)
+      confirm('Are you sure you want to delete this item?')? this.deleteCashier():null;
+    },
   }
 };
 </script>

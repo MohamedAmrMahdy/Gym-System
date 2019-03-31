@@ -9,11 +9,14 @@ export default new Vuex.Store({
     status: "",
     token: localStorage.getItem("token") || "",
     expiration: "",
-    user: ""
+    user: "",
+    cashiers: [],
   },
   getters : {
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
+    cashiers: state => state.cashiers,
+    status: state => state.status,
   },
   mutations: {
     auth_request(state) {
@@ -42,6 +45,34 @@ export default new Vuex.Store({
     addCashier_error(state) {
       state.status = "error";
     },
+    getCashier_request(state){
+      state.status = "loading";
+    },
+    getCashier_success(state, data) {
+      state.cashiers = data;
+      state.status = "success";
+    },
+    getCashier_error(state) {
+      state.status = "error";
+    },
+    editCashier_request(state){
+      state.status = "loading";
+    },
+    editCashier_success(state) {
+      state.status = "success";
+    },
+    editCashier_error(state) {
+      state.status = "error";
+    },
+    deleteCashier_request(state){
+      state.status = "loading";
+    },
+    deleteCashier_success(state) {
+      state.status = "success";
+    },
+    deleteCashier_error(state) {
+      state.status = "error";
+    },
   },
   actions: {
     login({ commit }, user) {
@@ -56,8 +87,8 @@ export default new Vuex.Store({
             const token = resp.data.token;
             const expiration = resp.data.expiration;
             const user = JSON.parse(atob(token.split('.')[1])).Username;
-            localStorage.setItem("token", token);
-            axios.defaults.headers.common["Authorization"] ="bearer " +  token;
+            localStorage.setItem("token", "bearer " + token);
+            axios.defaults.headers.common["Authorization"] = "bearer " +  token;
             const commitData = {token, expiration, user};
             commit("auth_success", commitData);
             resolve(resp);
@@ -81,7 +112,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit("addCashier_request");
         axios({
-          url: "https://localhost:44307/registerCashier",
+          url: "https://localhost:44307/user/registerCashier",
           data: CashierData,
           method: "POST"
         })
@@ -91,6 +122,61 @@ export default new Vuex.Store({
           })
           .catch(err => {
             commit("addCashier_error");
+            reject(err);
+          });
+      });
+    },
+    editCashier({ commit }, {id, firstName, lastName, userName, phoneNumber}) {
+      let data = {Id:id, firstName, lastName, userName, phoneNumber};
+      return new Promise((resolve, reject) => {
+        commit("editCashier_request");
+        axios({
+          url: "https://localhost:44307/user",
+          data: data,
+          method: "POST"
+        })
+          .then(resp => {
+            commit("editCashier_success");
+            resolve(resp);
+          })
+          .catch(err => {
+            commit("editCashier_error");
+            reject(err);
+          });
+      });
+    },
+    deleteCashier({ commit }, { id }) {
+      let Id = id;
+      return new Promise((resolve, reject) => {
+        commit("deleteCashier_request");
+        axios({
+          url: "https://localhost:44307/user",
+          data: {Id},
+          method: "DELETE"
+        })
+          .then(resp => {
+            commit("deleteCashier_success");
+            resolve(resp);
+          })
+          .catch(err => {
+            commit("deleteCashier_error");
+            reject(err);
+          });
+      });
+    },
+    getCashiers({ commit }){
+      return new Promise((resolve, reject) => {
+        commit("getCashier_request");
+        axios({
+          url: "https://localhost:44307/user",
+          method: "GET"
+        })
+          .then(resp => {
+            commit("getCashier_success", resp.data);
+            resolve(resp);
+          })
+          .catch(err => {
+            commit("getCashier_error");
             reject(err);
           });
       });
