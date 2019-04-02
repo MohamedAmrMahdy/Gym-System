@@ -12,7 +12,7 @@
             </v-flex>
           </v-layout>
         </template>
-        <v-card>
+        <v-card dark>
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
           </v-card-title>
@@ -20,33 +20,27 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="First name *" v-model="editedItem.firstName" required></v-text-field>
+                  <v-text-field prepend-icon="person" label="First name *" v-model="editedItem.firstName" required box></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="Middle name" v-model="editedItem.middleName"></v-text-field>
+                  <v-text-field label="Middle name" v-model="editedItem.middleName" box></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field label="Last name *" v-model="editedItem.lastName" required></v-text-field>
+                  <v-text-field label="Last name *" v-model="editedItem.lastName" required box></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
-                  <v-text-field label="Phone Number *" v-model="editedItem.phoneNumber" required></v-text-field>
+                  <v-text-field prepend-icon="local_phone" label="Phone Number *" v-model="editedItem.phoneNumber" required box></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
-                  <v-select
-                    :items="genders"
-                    item-text="gender"
-                    item-value="code"
-                    label="Gender *"
-                    v-model="selectedGender"
-                    v-on:change="editedItem.gender = selectedGender.code"
-                    required
-                    return-object
-                  ></v-select>
+                  <v-text-field
+                    label="Emergency Phone Number"
+                    v-model="editedItem.emergencyPhoneNumbr" box
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field label="Address" v-model="editedItem.address"></v-text-field>
+                  <v-text-field prepend-icon="location_city" label="Address" v-model="editedItem.address" box></v-text-field>
                 </v-flex>
-                <v-flex xs12>
+                <v-flex xs12 sm6 md9>
                   <v-menu
                     ref="menu"
                     v-model="menu"
@@ -60,25 +54,32 @@
                     min-width="290px"
                   >
                     <template v-slot:activator="{ on }">
-                      <v-text-field
-                        v-model="date"
-                        label="Day of Birth"
-                        readonly
-                        v-on="on"
-                      ></v-text-field>
+                      <v-text-field prepend-icon="cake" v-model="date" label="Day of Birth" v-on="on" box></v-text-field>
                     </template>
-                    <v-date-picker v-model="date" no-title scrollable>
+                    <v-date-picker 
+                    v-model="date" no-title scrollable>
                       <v-spacer></v-spacer>
                       <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
                       <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
                     </v-date-picker>
                   </v-menu>
                 </v-flex>
+                <v-flex xs12 sm6 md3>
+                  <v-text-field label="Age" v-model="editedItem.age" box></v-text-field>
+                </v-flex>
                 <v-flex xs12>
-                  <v-text-field
-                    label="Emergency Phone Number"
-                    v-model="editedItem.emergencyPhoneNumbr"
-                  ></v-text-field>
+                  <v-select
+                   prepend-icon="face" 
+                    :items="genders"
+                    item-text="gender"
+                    item-value="code"
+                    label="Gender *"
+                    v-model="selectedGender"
+                    v-on:change="editedItem.gender = selectedGender.code"
+                    required
+                    return-object
+                    box
+                  ></v-select>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -104,7 +105,7 @@
         class="elevation-1"
       >
         <template v-slot:items="props">
-          <td>{{ props.item.id }}</td>
+          <td>{{ '#'+props.item.id }}</td>
           <td>{{ props.item.firstName }}</td>
           <td>{{ props.item.middleName }}</td>
           <td>{{ props.item.lastName }}</td>
@@ -115,9 +116,18 @@
           <td>{{ props.item.gender==1? '👦' : '👧'}}</td>
           <td>{{ props.item.emergencyPhoneNumbr }}</td>
           <td>
-            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-            <v-icon small class="mr-2" color="red" @click="deleteItem(props.item)">delete</v-icon>
-            <v-icon small >check_circle</v-icon>
+            <v-btn small color="green" dark>
+              Check-In
+              <v-icon small dark right>check_circle</v-icon>
+            </v-btn>
+            <v-btn small color="blue" @click="editItem(props.item)" dark>
+              Edit
+              <v-icon small dark right>edit</v-icon>
+            </v-btn>
+            <v-btn small color="red" @click="deleteItem(props.item)" dark>
+              Delete
+              <v-icon small dark right>delete</v-icon>
+            </v-btn>
           </td>
         </template>
         <template v-slot:no-data>
@@ -180,7 +190,7 @@ export default {
           value: "emergencyPhoneNumbr",
           sortable: false
         },
-        { text: "Actions", align: "left", value: "name", sortable: false }
+        { text: "Actions", align: "center", value: "name", sortable: false }
       ],
       date: new Date().toISOString().substr(0, 10),
       menu: false,
@@ -197,6 +207,7 @@ export default {
         firstName: "",
         middleName: "",
         lastName: "",
+        age: "0",
         gender: "1",
         address: "",
         dob: new Date().toISOString().substr(0, 10),
@@ -208,6 +219,7 @@ export default {
         firstName: "",
         middleName: "",
         lastName: "",
+        age: "0",
         gender: "1",
         address: "",
         dob: new Date().toISOString().substr(0, 10),

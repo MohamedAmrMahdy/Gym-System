@@ -6,17 +6,19 @@
           <v-flex xs12 sm8 md4>
             <v-card class="elevation-12">
               <v-toolbar dark color="primary">
-                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-icon dark>fitness_center</v-icon>
+                <v-toolbar-title>Gym System Login</v-toolbar-title>
                 <v-spacer></v-spacer>
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field
+                  <v-text-field 
                     prepend-icon="person"
                     name="username"
                     label="Username"
                     type="text"
                     v-model="username"
+                    box
                   ></v-text-field>
                   <v-text-field
                     id="password"
@@ -25,10 +27,13 @@
                     label="Password"
                     type="password"
                     v-model="password"
+                    box
                   ></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
+                <v-spacer></v-spacer>
+                <span>© 2018-2019 SW2 Project All Rights Reserved</span>
                 <v-spacer></v-spacer>
                 <v-btn
                   color="primary"

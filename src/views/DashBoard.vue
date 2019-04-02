@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-container fluid grid-list-xl>
+    <v-container fluid grid-list-xl >
       <v-layout wrap row>
         <v-flex sm6 xs12 md6 lg3>
           <statsCard color="red" icon="perm_identity" title="Customers" subTitle="12,313"></statsCard>

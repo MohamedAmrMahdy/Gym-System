@@ -13,27 +13,31 @@
             </v-flex>
           </v-layout>
         </template>
-        <v-card>
+        <v-card dark>
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
           </v-card-title>
           <v-card-text>
-            <v-container grid-list-md>
+            <v-container grid-list-md dark>
               <v-layout wrap>
                 <v-flex xs12 sm6 md6>
-                  <v-text-field label="First name *" v-model="editedItem.firstName" required></v-text-field>
+                  <v-text-field 
+                    prepend-icon="person" label="First name *" v-model="editedItem.firstName" required box></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
-                  <v-text-field label="Last name *" v-model="editedItem.lastName" required></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md6>
-                  <v-text-field label="Phone Number *" v-model="editedItem.phoneNumber" required></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md6>
-                  <v-text-field label="Username *" v-model="editedItem.userName" required></v-text-field>
+                  <v-text-field label="Last name *" v-model="editedItem.lastName" required box></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field v-if="editedID == '-1'" label="Password *" v-model="editedItem.Password" type="password" required></v-text-field>
+                  <v-text-field 
+                    prepend-icon="local_phone" label="Phone Number *" v-model="editedItem.phoneNumber" required box></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field 
+                    prepend-icon="verified_user" label="Username *" v-model="editedItem.userName" required box></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field 
+                    prepend-icon="remove_red_eye" v-if="editedID == '-1'" label="Password *" v-model="editedItem.Password" type="password" required box></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -59,19 +63,14 @@
           <td>{{ props.item.userName }}</td>
           <td>{{ props.item.phoneNumber }}</td>
           <td >
-            <v-icon
-              small
-              class="mr-2"
-              @click="editItem(props.item)"
-            >
-              edit
-            </v-icon>
-            <v-icon
-              small
-              @click="deleteItem(props.item)"
-            >
-              delete
-            </v-icon>
+            <v-btn small color="blue" @click="editItem(props.item)" dark>
+              Edit
+              <v-icon small dark right>edit</v-icon>
+            </v-btn>
+            <v-btn small color="red" @click="deleteItem(props.item)" dark>
+              Delete
+              <v-icon small dark right>delete</v-icon>
+            </v-btn>
           </td>
         </template>
         <template v-slot:no-data>

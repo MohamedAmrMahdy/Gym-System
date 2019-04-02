@@ -49,12 +49,34 @@ export default {
     }
   },
   actions: {
-    addCustomer({ commit }, CustomerData) {
+    addCustomer(
+      { commit },
+      {
+        id,
+        firstName,
+        middleName,
+        lastName,
+        gender,
+        address,
+        dob,
+        phoneNumber,
+        emergencyPhoneNumbr
+      }
+    ) {
       return new Promise((resolve, reject) => {
         commit("addCustomer_request");
         axios({
           url: "https://localhost:44307/api/customers",
-          data: CustomerData,
+          data: {
+            firstName,
+            middleName,
+            lastName,
+            gender,
+            address,
+            dob,
+            phoneNumber,
+            emergencyPhoneNumbr
+          },
           method: "POST"
         })
           .then(resp => {
@@ -68,15 +90,33 @@ export default {
       });
     },
     editCustomer(
-      { commit },
-      { id, firstName, lastName, userName, phoneNumber }
+      { commit }, {address,
+      age,
+      dob,
+      emergencyPhoneNumbr,
+      firstName,
+      gender,
+      id,
+      lastName,
+      middleName,
+      phoneNumber
+      }
     ) {
-      let data = { Id: id, firstName, lastName, userName, phoneNumber };
       return new Promise((resolve, reject) => {
         commit("editCustomer_request");
         axios({
-          url: "https://localhost:44307/api/customer/" + id,
-          data: data,
+          url: "https://localhost:44307/api/customers/" + id,
+          data: {address,
+            age,
+            dob,
+            emergencyPhoneNumbr,
+            firstName,
+            gender,
+            id,
+            lastName,
+            middleName,
+            phoneNumber
+            },
           method: "PUT"
         })
           .then(resp => {
@@ -94,7 +134,7 @@ export default {
       return new Promise((resolve, reject) => {
         commit("deleteCustomer_request");
         axios({
-          url: "https://localhost:44307/user",
+          url: "https://localhost:44307/api/customers/" + id,
           data: { Id },
           method: "DELETE"
         })
