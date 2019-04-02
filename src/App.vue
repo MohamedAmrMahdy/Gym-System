@@ -15,7 +15,6 @@
             :vertical="this.$store.getters['snackbar/snackbarState'].vertical"
           >
             {{ this.$store.getters['snackbar/snackbarState'].snackbarText }}
-            <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
           </v-snackbar>
   </v-app>
 </template>

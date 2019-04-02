@@ -135,7 +135,7 @@ export default {
         phoneNumber: "",
       },
       defaultItem: {
-        id: "test",
+        id: "",
         firstName: "",
         lastName: "",
         userName: "",
