@@ -52,7 +52,6 @@ export default {
     addCustomer(
       { commit },
       {
-        id,
         firstName,
         middleName,
         lastName,
