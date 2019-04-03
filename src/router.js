@@ -75,7 +75,7 @@ let router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.getters['apiAuth/isLoggedIn']) {
+    if (store.getters['apiAuth/isLoggedIn'] && localStorage.getItem("token")) {
       next();
       return;
     }
