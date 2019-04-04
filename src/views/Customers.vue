@@ -224,40 +224,6 @@ export default {
       date: new Date().toISOString().substr(0, 10),
       menu: false,
       editedID: "-1",
-      memberShipTypes: [
-        {
-          membershipTypeId: 1,
-          name: "1 Month",
-          signUpFee: 200,
-          durationInMonths: 1,
-          saunaAccess: false,
-          crossFitAccess: false
-        },
-        {
-          membershipTypeId: 2,
-          name: "3 Month with 10% Discount",
-          signUpFee: 540,
-          durationInMonths: 3,
-          saunaAccess: false,
-          crossFitAccess: false
-        },
-        {
-          membershipTypeId: 3,
-          name: "6 Month with 20% Discount and CrossFit",
-          signUpFee: 640,
-          durationInMonths: 6,
-          saunaAccess: false,
-          crossFitAccess: true
-        },
-        {
-          membershipTypeId: 4,
-          name: "1 Year with 30% Discount, CrossFit and Sauna",
-          signUpFee: 840,
-          durationInMonths: 12,
-          saunaAccess: true,
-          crossFitAccess: true
-        }
-      ],
       selectedGender: { gender: "Male", code: 1 },
       genders: [
         { gender: "Unknown", code: 0 },
@@ -302,6 +268,9 @@ export default {
     },
     customers: function() {
       return this.$store.getters["apiCustomers/customers"];
+    },
+    memberShipTypes: function() {
+      return this.$store.getters["apiMemberships/memberships"];
     }
   },
   created() {
@@ -312,7 +281,12 @@ export default {
       console.log(this.customers);
       this.$store
         .dispatch("apiCustomers/getCustomers")
+        .then(() => {
+          this.$store
+        .dispatch("apiMemberships/getMemberships")
         .then(() => this.close())
+        .catch(err => console.log(err));
+          this.close();})
         .catch(err => console.log(err));
     },
     close: function() {
