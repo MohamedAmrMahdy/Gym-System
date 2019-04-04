@@ -57,6 +57,7 @@ export default {
         lastName,
         gender,
         address,
+        membershipTypeId,
         dob,
         phoneNumber,
         emergencyPhoneNumbr
@@ -72,6 +73,7 @@ export default {
             lastName,
             gender,
             address,
+            membershipTypeId,
             dob,
             phoneNumber,
             emergencyPhoneNumbr
@@ -93,6 +95,7 @@ export default {
       age,
       dob,
       emergencyPhoneNumbr,
+      membershipTypeId,
       firstName,
       gender,
       id,
@@ -109,6 +112,7 @@ export default {
             age,
             dob,
             emergencyPhoneNumbr,
+            membershipTypeId,
             firstName,
             gender,
             id,

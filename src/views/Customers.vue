@@ -20,7 +20,13 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field prepend-icon="person" label="First name *" v-model="editedItem.firstName" required box></v-text-field>
+                  <v-text-field
+                    prepend-icon="person"
+                    label="First name *"
+                    v-model="editedItem.firstName"
+                    required
+                    box
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
                   <v-text-field label="Middle name" v-model="editedItem.middleName" box></v-text-field>
@@ -29,16 +35,28 @@
                   <v-text-field label="Last name *" v-model="editedItem.lastName" required box></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
-                  <v-text-field prepend-icon="local_phone" label="Phone Number *" v-model="editedItem.phoneNumber" required box></v-text-field>
+                  <v-text-field
+                    prepend-icon="local_phone"
+                    label="Phone Number *"
+                    v-model="editedItem.phoneNumber"
+                    required
+                    box
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
                   <v-text-field
                     label="Emergency Phone Number"
-                    v-model="editedItem.emergencyPhoneNumbr" box
+                    v-model="editedItem.emergencyPhoneNumbr"
+                    box
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field prepend-icon="location_city" label="Address" v-model="editedItem.address" box></v-text-field>
+                  <v-text-field
+                    prepend-icon="location_city"
+                    label="Address"
+                    v-model="editedItem.address"
+                    box
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md9>
                   <v-menu
@@ -54,10 +72,15 @@
                     min-width="290px"
                   >
                     <template v-slot:activator="{ on }">
-                      <v-text-field prepend-icon="cake" v-model="date" label="Day of Birth" v-on="on" box></v-text-field>
+                      <v-text-field
+                        prepend-icon="cake"
+                        v-model="date"
+                        label="Day of Birth"
+                        v-on="on"
+                        box
+                      ></v-text-field>
                     </template>
-                    <v-date-picker 
-                    v-model="date" no-title scrollable>
+                    <v-date-picker v-model="date" no-title scrollable>
                       <v-spacer></v-spacer>
                       <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
                       <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
@@ -69,7 +92,7 @@
                 </v-flex>
                 <v-flex xs12>
                   <v-select
-                   prepend-icon="face" 
+                    prepend-icon="face"
                     :items="genders"
                     item-text="gender"
                     item-value="code"
@@ -77,6 +100,19 @@
                     v-model="selectedGender"
                     v-on:change="editedItem.gender = selectedGender.code"
                     required
+                    return-object
+                    box
+                  ></v-select>
+                </v-flex>
+                <v-flex xs12>
+                  <v-select
+                    prepend-icon="assignment"
+                    :items="memberShipTypes"
+                    item-text="name"
+                    item-value="membershipTypeId"
+                    label="Member Ship Types"
+                    v-model="selectedMemberShipTypes"
+                    v-on:change="editedItem.membershipTypeId = selectedMemberShipTypes.membershipTypeId"
                     return-object
                     box
                   ></v-select>
@@ -106,15 +142,14 @@
       >
         <template v-slot:items="props">
           <td>{{ '#'+props.item.id }}</td>
-          <td>{{ props.item.firstName }}</td>
-          <td>{{ props.item.middleName }}</td>
-          <td>{{ props.item.lastName }}</td>
+          <td>{{ `${props.item.firstName} ${props.item.middleName} ${props.item.lastName}`}}</td>
           <td>{{ props.item.age }}</td>
           <td>{{ props.item.address }}</td>
           <td>{{ props.item.phoneNumber }}</td>
-          <td>{{ props.item.dob }}</td>
+          <td>{{ props.item.dob.substr(0, 10) }}</td>
           <td>{{ props.item.gender==1? '👦' : '👧'}}</td>
           <td>{{ props.item.emergencyPhoneNumbr }}</td>
+          <td>{{ memberShipTypes.find(memberShipType => memberShipType.membershipTypeId == props.item.membershipTypeId).name}}</td>
           <td>
             <v-btn small color="green" dark>
               Check-In
@@ -152,22 +187,10 @@ export default {
           value: "id"
         },
         {
-          text: "First Name",
+          text: "Full Name",
           align: "left",
           sortable: false,
-          value: "firstName"
-        },
-        {
-          text: "Middle Name",
-          align: "left",
-          sortable: false,
-          value: "middleName"
-        },
-        {
-          text: "Last Name",
-          align: "left",
-          sortable: false,
-          value: "lastName"
+          value: "fullName"
         },
         {
           text: "Age",
@@ -190,11 +213,51 @@ export default {
           value: "emergencyPhoneNumbr",
           sortable: false
         },
+        {
+          text: "Membership Type",
+          align: "left",
+          value: "membershipType",
+          sortable: false
+        },
         { text: "Actions", align: "center", value: "name", sortable: false }
       ],
       date: new Date().toISOString().substr(0, 10),
       menu: false,
       editedID: "-1",
+      memberShipTypes: [
+        {
+          membershipTypeId: 1,
+          name: "1 Month",
+          signUpFee: 200,
+          durationInMonths: 1,
+          saunaAccess: false,
+          crossFitAccess: false
+        },
+        {
+          membershipTypeId: 2,
+          name: "3 Month with 10% Discount",
+          signUpFee: 540,
+          durationInMonths: 3,
+          saunaAccess: false,
+          crossFitAccess: false
+        },
+        {
+          membershipTypeId: 3,
+          name: "6 Month with 20% Discount and CrossFit",
+          signUpFee: 640,
+          durationInMonths: 6,
+          saunaAccess: false,
+          crossFitAccess: true
+        },
+        {
+          membershipTypeId: 4,
+          name: "1 Year with 30% Discount, CrossFit and Sauna",
+          signUpFee: 840,
+          durationInMonths: 12,
+          saunaAccess: true,
+          crossFitAccess: true
+        }
+      ],
       selectedGender: { gender: "Male", code: 1 },
       genders: [
         { gender: "Unknown", code: 0 },
@@ -210,6 +273,7 @@ export default {
         age: "0",
         gender: "1",
         address: "",
+        membershipTypeId: "1",
         dob: new Date().toISOString().substr(0, 10),
         phoneNumber: "",
         emergencyPhoneNumbr: ""
@@ -222,6 +286,7 @@ export default {
         age: "0",
         gender: "1",
         address: "",
+        membershipTypeId: "1",
         dob: new Date().toISOString().substr(0, 10),
         phoneNumber: "",
         emergencyPhoneNumbr: ""
@@ -360,6 +425,10 @@ export default {
       this.editedItem = Object.assign({}, item);
       this.selectedGender = this.genders.find(
         gender => gender.code == this.editedItem.gender
+      );
+      this.selectedMemberShipTypes = this.memberShipTypes.find(
+        memberShipType =>
+          memberShipType.membershipTypeId == this.editedItem.membershipTypeId
       );
       this.dialog = true;
     },
