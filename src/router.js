@@ -39,9 +39,9 @@ let router = new Router({
           component: () => import("./views/Customers.vue")
         },
         {
-          path: "subscriptions",
-          name: "Subscriptions",
-          component: () => import("./views/Subscriptions.vue")
+          path: "membershipsTypes",
+          name: "Memberships Types",
+          component: () => import("./views/MembershipsTypes.vue")
         },
         {
           path: "cashiers",

@@ -6,7 +6,7 @@
           <v-layout>
             <v-flex xs2>
               <v-btn color="blue" class="white--text" v-on="on">
-                Add Customer
+                Add Membership Type
                 <v-icon right dark>add</v-icon>
               </v-btn>
             </v-flex>
@@ -20,7 +20,13 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field prepend-icon="person" label="First name *" v-model="editedItem.firstName" required box></v-text-field>
+                  <v-text-field
+                    prepend-icon="person"
+                    label="First name *"
+                    v-model="editedItem.firstName"
+                    required
+                    box
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
                   <v-text-field label="Middle name" v-model="editedItem.middleName" box></v-text-field>
@@ -29,16 +35,28 @@
                   <v-text-field label="Last name *" v-model="editedItem.lastName" required box></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
-                  <v-text-field prepend-icon="local_phone" label="Phone Number *" v-model="editedItem.phoneNumber" required box></v-text-field>
+                  <v-text-field
+                    prepend-icon="local_phone"
+                    label="Phone Number *"
+                    v-model="editedItem.phoneNumber"
+                    required
+                    box
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md6>
                   <v-text-field
                     label="Emergency Phone Number"
-                    v-model="editedItem.emergencyPhoneNumbr" box
+                    v-model="editedItem.emergencyPhoneNumbr"
+                    box
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field prepend-icon="location_city" label="Address" v-model="editedItem.address" box></v-text-field>
+                  <v-text-field
+                    prepend-icon="location_city"
+                    label="Address"
+                    v-model="editedItem.address"
+                    box
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md9>
                   <v-menu
@@ -54,10 +72,15 @@
                     min-width="290px"
                   >
                     <template v-slot:activator="{ on }">
-                      <v-text-field prepend-icon="cake" v-model="date" label="Day of Birth" v-on="on" box></v-text-field>
+                      <v-text-field
+                        prepend-icon="cake"
+                        v-model="date"
+                        label="Day of Birth"
+                        v-on="on"
+                        box
+                      ></v-text-field>
                     </template>
-                    <v-date-picker 
-                    v-model="date" no-title scrollable>
+                    <v-date-picker v-model="date" no-title scrollable>
                       <v-spacer></v-spacer>
                       <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
                       <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
@@ -69,7 +92,7 @@
                 </v-flex>
                 <v-flex xs12>
                   <v-select
-                   prepend-icon="face" 
+                    prepend-icon="face"
                     :items="genders"
                     item-text="gender"
                     item-value="code"
@@ -91,8 +114,8 @@
             <v-btn
               color="blue"
               flat
-              :loading="this.$store.getters['apiCustomers/status'] == 'loading'"
-              :disabled="!this.$store.getters['apiCustomers/status']"
+              :loading="this.$store.getters['apiMemberships/status'] == 'loading'"
+              :disabled="!this.$store.getters['apiMemberships/status']"
               @click="pushCustomer"
             >{{formButton}}</v-btn>
           </v-card-actions>
@@ -100,26 +123,18 @@
       </v-dialog>
       <v-data-table
         :headers="headers"
-        :items="customers"
-        :loading="this.$store.getters['apiCustomers/status'] == 'loading'"
+        :items="memberships"
+        :loading="this.$store.getters['apiMemberships/status'] == 'loading'"
         class="elevation-1"
       >
         <template v-slot:items="props">
-          <td>{{ '#'+props.item.id }}</td>
-          <td>{{ props.item.firstName }}</td>
-          <td>{{ props.item.middleName }}</td>
-          <td>{{ props.item.lastName }}</td>
-          <td>{{ props.item.age }}</td>
-          <td>{{ props.item.address }}</td>
-          <td>{{ props.item.phoneNumber }}</td>
-          <td>{{ props.item.dob }}</td>
-          <td>{{ props.item.gender==1? '👦' : '👧'}}</td>
-          <td>{{ props.item.emergencyPhoneNumbr }}</td>
+          <td>{{ '#'+props.item.membershipTypeId }}</td>
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.signUpFee }}</td>
+          <td>{{ props.item.durationInMonths }}</td>
+          <td>{{ props.item.saunaAccess == 	true ? '✅' : '❌' }}</td>
+          <td>{{ props.item.crossFitAccess == 	true ? '✅' : '❌' }}</td>
           <td>
-            <v-btn small color="green" dark>
-              Check-In
-              <v-icon small dark right>check_circle</v-icon>
-            </v-btn>
             <v-btn small color="blue" @click="editItem(props.item)" dark>
               Edit
               <v-icon small dark right>edit</v-icon>
@@ -146,49 +161,40 @@ export default {
       loading: false,
       headers: [
         {
-          text: "Customer ID",
+          text: "Membership Type ID",
           align: "left",
           sortable: false,
-          value: "id"
+          value: "membershipTypeId"
         },
         {
-          text: "First Name",
+          text: "Name",
           align: "left",
           sortable: false,
-          value: "firstName"
+          value: "name"
         },
         {
-          text: "Middle Name",
+          text: "Sign Up Fee",
           align: "left",
           sortable: false,
-          value: "middleName"
+          value: "signUpFee"
         },
         {
-          text: "Last Name",
+          text: "Duration In Months",
           align: "left",
           sortable: false,
-          value: "lastName"
+          value: "durationInMonths"
         },
         {
-          text: "Age",
+          text: "Sauna Access",
           align: "left",
           sortable: false,
-          value: "age"
+          value: "saunaAccess"
         },
-        { text: "Address", align: "left", value: "address", sortable: false },
         {
-          text: "Phone Number",
+          text: "Cross-Fit Access",
           align: "left",
-          value: "phoneNumber",
-          sortable: false
-        },
-        { text: "Date Of Birth", align: "left", value: "dob", sortable: false },
-        { text: "Gender", align: "left", value: "gender", sortable: false },
-        {
-          text: "Emergency Phone",
-          align: "left",
-          value: "emergencyPhoneNumbr",
-          sortable: false
+          sortable: false,
+          value: "crossFitAccess"
         },
         { text: "Actions", align: "center", value: "name", sortable: false }
       ],
@@ -235,8 +241,8 @@ export default {
     formButton() {
       return this.editedID === "-1" ? "Add" : "Edit";
     },
-    customers: function() {
-      return this.$store.getters["apiCustomers/customers"];
+    memberships: function() {
+      return this.$store.getters["apiMemberships/memberships"];
     }
   },
   created() {
@@ -244,9 +250,8 @@ export default {
   },
   methods: {
     initialize: function() {
-      console.log(this.customers);
       this.$store
-        .dispatch("apiCustomers/getCustomers")
+        .dispatch("apiMemberships/getMemberships")
         .then(() => this.close())
         .catch(err => console.log(err));
     },

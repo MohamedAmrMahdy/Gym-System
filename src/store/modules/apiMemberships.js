@@ -19,11 +19,11 @@ export default {
     addMembership_error(state) {
       state.status = "error";
     },
-    getMembershipss_request(state) {
+    getMemberships_request(state) {
       state.status = "loading";
     },
     getMemberships_success(state, data) {
-      state.Memberships = data;
+      state.memberships = data;
       state.status = "success";
     },
     getMemberships_error(state) {

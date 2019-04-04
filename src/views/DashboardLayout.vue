@@ -82,9 +82,9 @@ export default {
         },
         {
           icon: "rss_feed",
-          title: "subscriptions",
-          subtitle: "shows subscriptions types",
-          path: "/dashboard/subscriptions"
+          title: "Membership Types",
+          subtitle: "shows Membership types",
+          path: "/dashboard/membershipsTypes"
         },
         {
           divider: true
