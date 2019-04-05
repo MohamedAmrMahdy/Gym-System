@@ -1,184 +1,193 @@
 <template>
   <v-app>
     <v-container>
-      <v-dialog v-model="dialog" persistent max-width="600px">
-        <template v-slot:activator="{ on }">
-          <v-layout>
-            <v-flex xs2>
+      <v-card>
+        <v-dialog v-model="dialog" persistent max-width="600px">
+          <template v-slot:activator="{ on }">
+            <v-card-title>
               <v-btn color="blue" class="white--text" v-on="on">
                 Add Customer
                 <v-icon right dark>add</v-icon>
               </v-btn>
-            </v-flex>
-          </v-layout>
-        </template>
-        <v-card dark>
-          <v-card-title>
-            <span class="headline">{{ formTitle }}</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field
-                    prepend-icon="person"
-                    label="First name *"
-                    v-model="editedItem.firstName"
-                    required
-                    box
-                  ></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field label="Middle name" v-model="editedItem.middleName" box></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field label="Last name *" v-model="editedItem.lastName" required box></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md6>
-                  <v-text-field
-                    prepend-icon="local_phone"
-                    label="Phone Number *"
-                    v-model="editedItem.phoneNumber"
-                    required
-                    box
-                  ></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md6>
-                  <v-text-field
-                    label="Emergency Phone Number"
-                    v-model="editedItem.emergencyPhoneNumbr"
-                    box
-                  ></v-text-field>
-                </v-flex>
-                <v-flex xs12>
-                  <v-text-field
-                    prepend-icon="location_city"
-                    label="Address"
-                    v-model="editedItem.address"
-                    box
-                  ></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md9>
-                  <v-menu
-                    ref="menu"
-                    v-model="menu"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    :return-value.sync="date"
-                    lazy
-                    transition="scale-transition"
-                    offset-y
-                    full-width
-                    min-width="290px"
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-text-field
-                        prepend-icon="cake"
-                        v-model="date"
-                        label="Day of Birth"
-                        v-on="on"
-                        box
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="date" no-title scrollable>
-                      <v-spacer></v-spacer>
-                      <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-                      <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-                    </v-date-picker>
-                  </v-menu>
-                </v-flex>
-                <v-flex xs12 sm6 md3>
-                  <v-text-field label="Age" v-model="editedItem.age" box></v-text-field>
-                </v-flex>
-                <v-flex xs12>
-                  <v-select
-                    prepend-icon="face"
-                    :items="genders"
-                    item-text="gender"
-                    item-value="code"
-                    label="Gender *"
-                    v-model="selectedGender"
-                    v-on:change="editedItem.gender = selectedGender.code"
-                    required
-                    return-object
-                    box
-                  ></v-select>
-                </v-flex>
-                <v-flex xs12>
-                  <v-select
-                    prepend-icon="assignment"
-                    :items="memberShipTypes"
-                    item-text="name"
-                    item-value="membershipTypeId"
-                    label="Member Ship Types"
-                    v-model="selectedMemberShipTypes"
-                    v-on:change="editedItem.membershipTypeId = selectedMemberShipTypes.membershipTypeId"
-                    return-object
-                    box
-                  ></v-select>
-                </v-flex>
-              </v-layout>
-            </v-container>
-            <small>*indicates required field</small>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="red" flat @click="close">Close</v-btn>
-            <v-btn
-              color="blue"
-              flat
-              :loading="this.$store.getters['apiCustomers/status'] == 'loading'"
-              :disabled="!this.$store.getters['apiCustomers/status']"
-              @click="pushCustomer"
-            >{{formButton}}</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-data-table
-        :headers="headers"
-        :items="customers"
-        :loading="this.$store.getters['apiCustomers/status'] == 'loading'"
-        class="elevation-1"
-      >
-        <template v-slot:items="props">
-          <td>{{ '#'+props.item.id }}</td>
-          <td>{{ `${props.item.firstName} ${props.item.middleName} ${props.item.lastName}`}}</td>
-          <td>{{ props.item.age }}</td>
-          <td>{{ props.item.address }}</td>
-          <td>{{ props.item.phoneNumber }}</td>
-          <td>{{ props.item.dob.substr(0, 10) }}</td>
-          <td>{{ props.item.gender==1? '👦' : '👧'}}</td>
-          <td>{{ props.item.emergencyPhoneNumbr }}</td>
-          <td
-            v-if="memberShipTypes.find(memberShipType => memberShipType.membershipTypeId == props.item.membershipTypeId)"
-          >
-            <div>{{ `Type : ${memberShipTypes.find(memberShipType => memberShipType.membershipTypeId == props.item.membershipTypeId).name}` }}</div>
-          </td>
-          <td>
-            <div>{{ `Start : ${props.item.membershipStart.substr(0, 10)}` }}</div>
-            <div>{{ `End : ${props.item.membershipEnd.substr(0, 10)}`}}</div>
-            <div>{{ `Days Left : ${props.item.daysLeft}`}}</div>
-          </td>
-          <td>
-            <v-btn color="green" @click="checkInItem(props.item.id)" dark block small>
-              Check-In
-              <v-icon dark right>vertical_align_bottom</v-icon>
-            </v-btn>
-            <v-btn color="teal" @click="renewItem(props.item.id)" dark block small>
-              Renew
-              <v-icon dark right>autorenew</v-icon>
-            </v-btn>
-            <v-btn color="blue" @click="editItem(props.item)" dark block small>
-              Edit
-              <v-icon dark right>edit</v-icon>
-            </v-btn>
-            <v-btn color="red" @click="deleteItem(props.item)" dark block small>
-              Delete
-              <v-icon dark right>delete_forever</v-icon>
-            </v-btn>
-          </td>
-        </template>
-      </v-data-table>
+              <v-spacer></v-spacer>
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="Search For Customer Id"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-card-title>
+          </template>
+          <v-card dark>
+            <v-card-title>
+              <span class="headline">{{ formTitle }}</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container grid-list-md>
+                <v-layout wrap>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field
+                      prepend-icon="person"
+                      label="First name *"
+                      v-model="editedItem.firstName"
+                      required
+                      box
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field label="Middle name" v-model="editedItem.middleName" box></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field label="Last name *" v-model="editedItem.lastName" required box></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md6>
+                    <v-text-field
+                      prepend-icon="local_phone"
+                      label="Phone Number *"
+                      v-model="editedItem.phoneNumber"
+                      required
+                      box
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md6>
+                    <v-text-field
+                      label="Emergency Phone Number"
+                      v-model="editedItem.emergencyPhoneNumbr"
+                      box
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12>
+                    <v-text-field
+                      prepend-icon="location_city"
+                      label="Address"
+                      v-model="editedItem.address"
+                      box
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md9>
+                    <v-menu
+                      ref="menu"
+                      v-model="menu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      :return-value.sync="date"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          prepend-icon="cake"
+                          v-model="date"
+                          label="Day of Birth"
+                          v-on="on"
+                          box
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker v-model="date" no-title scrollable>
+                        <v-spacer></v-spacer>
+                        <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                        <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-flex>
+                  <v-flex xs12 sm6 md3>
+                    <v-text-field label="Age" v-model="editedItem.age" box></v-text-field>
+                  </v-flex>
+                  <v-flex xs12>
+                    <v-select
+                      prepend-icon="face"
+                      :items="genders"
+                      item-text="gender"
+                      item-value="code"
+                      label="Gender *"
+                      v-model="selectedGender"
+                      v-on:change="editedItem.gender = selectedGender.code"
+                      required
+                      return-object
+                      box
+                    ></v-select>
+                  </v-flex>
+                  <v-flex xs12>
+                    <v-select
+                      prepend-icon="assignment"
+                      :items="memberShipTypes"
+                      item-text="name"
+                      item-value="membershipTypeId"
+                      label="Member Ship Types"
+                      v-model="selectedMemberShipTypes"
+                      v-on:change="editedItem.membershipTypeId = selectedMemberShipTypes.membershipTypeId"
+                      return-object
+                      box
+                    ></v-select>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+              <small>*indicates required field</small>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="red" flat @click="close">Close</v-btn>
+              <v-btn
+                color="blue"
+                flat
+                :loading="this.$store.getters['apiCustomers/status'] == 'loading'"
+                :disabled="!this.$store.getters['apiCustomers/status']"
+                @click="pushCustomer"
+              >{{formButton}}</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-data-table
+          :headers="headers"
+          :items="customers"
+          :loading="this.$store.getters['apiCustomers/status'] == 'loading'"
+          :search="search"
+          class="elevation-1"
+        >
+          <template v-slot:items="props">
+            <td>{{ '#'+props.item.id }}</td>
+            <td>{{ `${props.item.firstName} ${props.item.middleName} ${props.item.lastName}`}}</td>
+            <td>{{ props.item.age }}</td>
+            <td>{{ props.item.address }}</td>
+            <td>{{ props.item.phoneNumber }}</td>
+            <td>{{ props.item.dob.substr(0, 10) }}</td>
+            <td>{{ props.item.gender==1? '👦' : '👧'}}</td>
+            <td>{{ props.item.emergencyPhoneNumbr }}</td>
+            <td
+              v-if="memberShipTypes.find(memberShipType => memberShipType.membershipTypeId == props.item.membershipTypeId)"
+            >
+              <div>{{ `Type : ${memberShipTypes.find(memberShipType => memberShipType.membershipTypeId == props.item.membershipTypeId).name}` }}</div>
+            </td>
+            <td>
+              <div>{{ `Start : ${props.item.membershipStart.substr(0, 10)}` }}</div>
+              <div>{{ `End : ${props.item.membershipEnd.substr(0, 10)}`}}</div>
+              <div>{{ `Days Left : ${props.item.daysLeft}`}}</div>
+            </td>
+            <td>
+              <v-btn color="green" @click="checkInItem(props.item.id)" dark block small>
+                Check-In
+                <v-icon dark right>vertical_align_bottom</v-icon>
+              </v-btn>
+              <v-btn color="teal" @click="renewItem(props.item.id)" dark block small>
+                Renew
+                <v-icon dark right>autorenew</v-icon>
+              </v-btn>
+              <v-btn color="blue" @click="editItem(props.item)" dark block small>
+                Edit
+                <v-icon dark right>edit</v-icon>
+              </v-btn>
+              <v-btn color="red" @click="deleteItem(props.item)" dark block small>
+                Delete
+                <v-icon dark right>delete_forever</v-icon>
+              </v-btn>
+            </td>
+          </template>
+        </v-data-table>
+      </v-card>
     </v-container>
   </v-app>
 </template>
@@ -187,6 +196,7 @@ export default {
   name: "App",
   data() {
     return {
+      search: "",
       dialog: false,
       loading: false,
       headers: [
@@ -200,7 +210,7 @@ export default {
           text: "Customer Full Name",
           align: "left",
           sortable: false,
-          value: "fullName"
+          value: "full_name"
         },
         {
           text: "Age",
@@ -212,7 +222,7 @@ export default {
         {
           text: "Phone Number",
           align: "left",
-          value: "phoneNumber",
+          value: "phone_number",
           sortable: false
         },
         { text: "Date Of Birth", align: "left", value: "dob", sortable: false },
@@ -220,19 +230,19 @@ export default {
         {
           text: "Emergency Phone",
           align: "left",
-          value: "emergencyPhoneNumbr",
+          value: "emergency_phone_number",
           sortable: false
         },
         {
           text: "Membership Type",
           align: "left",
-          value: "membershipType",
+          value: "membership_type",
           sortable: false
         },
         {
           text: "Membership Details",
           align: "left",
-          value: "membershipDetails",
+          value: "membership_details",
           sortable: false
         },
         { text: "Actions", align: "center", value: "name", sortable: false }
