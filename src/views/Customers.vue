@@ -174,9 +174,15 @@
               <div>{{ `Type : ${memberShipTypes.find(memberShipType => memberShipType.membershipTypeId == props.item.membershipTypeId).name}` }}</div>
             </td>
             <td>
-              <div>{{ `Start : ${props.item.membershipStart.substr(0, 10)}` }}</div>
-              <div>{{ `End : ${props.item.membershipEnd.substr(0, 10)}`}}</div>
-              <div>{{ `Days Left : ${props.item.daysLeft}`}}</div>
+              <v-chip color="blue" text-color="white">
+                <v-avatar class="blue darken-4"><v-icon>visibility</v-icon></v-avatar>{{props.item.membershipStart.substr(0, 10)}}
+              </v-chip>
+              <v-chip color="red" text-color="white">
+                <v-avatar class="red darken-4"><v-icon>visibility_off</v-icon></v-avatar>{{props.item.membershipEnd.substr(0, 10)}}
+              </v-chip>
+              <v-chip color="green" text-color="white">
+                <v-avatar class="green darken-4">{{props.item.daysLeft}}</v-avatar>Days Left
+              </v-chip>
             </td>
             <td>
               <v-btn color="green" @click="checkInItem(props.item.id)" dark block small>
