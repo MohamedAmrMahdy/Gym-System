@@ -25,117 +25,128 @@
             </v-card-title>
             <v-card-text>
               <v-container grid-list-md>
-                <v-layout wrap>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field
-                      prepend-icon="person"
-                      label="First name *"
-                      v-model="editedItem.firstName"
-                      required
-                      box
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field label="Middle name" v-model="editedItem.middleName" box></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field label="Last name *" v-model="editedItem.lastName" required box></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md6>
-                    <v-text-field
-                      prepend-icon="local_phone"
-                      label="Phone Number *"
-                      v-model="editedItem.phoneNumber"
-                      required
-                      box
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md6>
-                    <v-text-field
-                      label="Emergency Phone Number"
-                      v-model="editedItem.emergencyPhoneNumbr"
-                      box
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs12>
-                    <v-text-field
-                      prepend-icon="location_city"
-                      label="Address"
-                      v-model="editedItem.address"
-                      box
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md9>
-                    <v-menu
-                      ref="menu"
-                      v-model="menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      :return-value.sync="date"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          prepend-icon="cake"
-                          v-model="date"
-                          label="Day of Birth"
-                          v-on="on"
-                          box
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker v-model="date" no-title scrollable>
-                        <v-spacer></v-spacer>
-                        <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-                        <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-                      </v-date-picker>
-                    </v-menu>
-                  </v-flex>
-                  <v-flex xs12 sm6 md3>
-                    <v-text-field label="Age" v-model="editedItem.age" box></v-text-field>
-                  </v-flex>
-                  <v-flex xs12>
-                    <v-select
-                      prepend-icon="face"
-                      :items="genders"
-                      item-text="gender"
-                      item-value="code"
-                      label="Gender *"
-                      v-model="selectedGender"
-                      v-on:change="editedItem.gender = selectedGender.code"
-                      required
-                      return-object
-                      box
-                    ></v-select>
-                  </v-flex>
-                  <v-flex xs12>
-                    <v-select
-                      prepend-icon="assignment"
-                      :items="memberShipTypes"
-                      item-text="name"
-                      item-value="membershipTypeId"
-                      label="Member Ship Types"
-                      v-model="selectedMemberShipTypes"
-                      v-on:change="editedItem.membershipTypeId = selectedMemberShipTypes.membershipTypeId"
-                      return-object
-                      box
-                    ></v-select>
-                  </v-flex>
-                </v-layout>
+                <v-form ref="form" v-model="valid" lazy-validation>
+                  <v-layout wrap>
+                    <v-flex xs12 sm6 md4>
+                      <v-text-field
+                        prepend-icon="person"
+                        label="First name *"
+                        v-model="editedItem.firstName"
+                        required
+                        :rules="validRules.firstNameRules"
+                        box
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 sm6 md4>
+                      <v-text-field label="Middle name" v-model="editedItem.middleName" box></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 sm6 md4>
+                      <v-text-field
+                        label="Last name *"
+                        v-model="editedItem.lastName"
+                        required
+                        :rules="validRules.lastNameRules"
+                        box
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 sm6 md6>
+                      <v-text-field
+                        prepend-icon="local_phone"
+                        label="Phone Number *"
+                        v-model="editedItem.phoneNumber"
+                        required
+                        :rules="validRules.phoneNumberRules"
+                        box
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 sm6 md6>
+                      <v-text-field
+                        label="Emergency Phone Number"
+                        v-model="editedItem.emergencyPhoneNumbr"
+                        box
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex xs12>
+                      <v-text-field
+                        prepend-icon="location_city"
+                        label="Address"
+                        v-model="editedItem.address"
+                        box
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 sm6 md9>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="date"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            prepend-icon="cake"
+                            v-model="date"
+                            label="Day of Birth"
+                            v-on="on"
+                            box
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="date" no-title scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                          <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-flex>
+                    <v-flex xs12 sm6 md3>
+                      <v-text-field label="Age" v-model="editedItem.age" box></v-text-field>
+                    </v-flex>
+                    <v-flex xs12>
+                      <v-select
+                        prepend-icon="face"
+                        :items="genders"
+                        item-text="gender"
+                        item-value="code"
+                        label="Gender *"
+                        v-model="selectedGender"
+                        v-on:change="editedItem.gender = selectedGender.code"
+                        required
+                        return-object
+                        box
+                      ></v-select>
+                    </v-flex>
+                    <v-flex xs12>
+                      <v-select
+                        prepend-icon="assignment"
+                        :items="memberShipTypes"
+                        item-text="name"
+                        item-value="membershipTypeId"
+                        label="Member Ship Types"
+                        v-model="selectedMemberShipTypes"
+                        v-on:change="editedItem.membershipTypeId = selectedMemberShipTypes.membershipTypeId"
+                        return-object
+                        box
+                      ></v-select>
+                    </v-flex>
+                  </v-layout>
+                </v-form>
               </v-container>
               <small>*indicates required field</small>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="red" flat @click="close">Close</v-btn>
+              <v-btn round outline @click="close">Close</v-btn>
               <v-btn
                 color="blue"
-                flat
+                round
+                outline
                 :loading="this.$store.getters['apiCustomers/status'] == 'loading'"
-                :disabled="!this.$store.getters['apiCustomers/status']"
+                :disabled="!this.$store.getters['apiCustomers/status'] || !valid"
                 @click="pushCustomer"
               >{{formButton}}</v-btn>
             </v-card-actions>
@@ -197,6 +208,24 @@ export default {
   data() {
     return {
       search: "",
+      valid: true,
+      validRules: {
+        firstNameRules: [
+          v => !!v || "First Name is required",
+          v =>
+            (v && v.length <= 20) ||
+            "First Name must be less than 20 characters"
+        ],
+        lastNameRules: [
+          v => !!v || "Last Name is required",
+          v =>
+            (v && v.length <= 20) || "Last Name must be less than 20 characters"
+        ],
+        phoneNumberRules: [
+          v => !!v || "Phone Number is required",
+          v => (v && v.length >= 8) || "Phone Number must be more than 8 digits"
+        ]
+      },
       dialog: false,
       loading: false,
       headers: [
@@ -328,6 +357,9 @@ export default {
       this.editedID = "-1";
     },
     pushCustomer: function() {
+      if (this.$refs.form.validate()) {
+        return (this.snackbar = true);
+      }
       this.loading = true;
       if (this.editedID === "-1") {
         this.$store
