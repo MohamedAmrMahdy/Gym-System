@@ -145,9 +145,6 @@
             </v-btn>
           </td>
         </template>
-        <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
       </v-data-table>
     </v-container>
   </v-app>
@@ -213,7 +210,7 @@ export default {
         firstName: "",
         middleName: "",
         lastName: "",
-        age: "0",
+        age: 0,
         gender: "1",
         address: "",
         dob: new Date().toISOString().substr(0, 10),
@@ -225,7 +222,7 @@ export default {
         firstName: "",
         middleName: "",
         lastName: "",
-        age: "0",
+        age: 0,
         gender: "1",
         address: "",
         dob: new Date().toISOString().substr(0, 10),

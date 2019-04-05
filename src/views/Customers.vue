@@ -149,24 +149,34 @@
           <td>{{ props.item.dob.substr(0, 10) }}</td>
           <td>{{ props.item.gender==1? '👦' : '👧'}}</td>
           <td>{{ props.item.emergencyPhoneNumbr }}</td>
-          <td>{{ memberShipTypes.find(memberShipType => memberShipType.membershipTypeId == props.item.membershipTypeId).name}}</td>
+          <td
+            v-if="memberShipTypes.find(memberShipType => memberShipType.membershipTypeId == props.item.membershipTypeId)"
+          >
+            <div>{{ `Type : ${memberShipTypes.find(memberShipType => memberShipType.membershipTypeId == props.item.membershipTypeId).name}` }}</div>
+          </td>
           <td>
-            <v-btn small color="green" dark>
+            <div>{{ `Start : ${props.item.membershipStart.substr(0, 10)}` }}</div>
+            <div>{{ `End : ${props.item.membershipEnd.substr(0, 10)}`}}</div>
+            <div>{{ `Days Left : ${props.item.daysLeft}`}}</div>
+          </td>
+          <td>
+            <v-btn color="green" @click="checkInItem(props.item.id)" dark block small>
               Check-In
-              <v-icon small dark right>check_circle</v-icon>
+              <v-icon dark right>vertical_align_bottom</v-icon>
             </v-btn>
-            <v-btn small color="blue" @click="editItem(props.item)" dark>
+            <v-btn color="teal" @click="renewItem(props.item.id)" dark block small>
+              Renew
+              <v-icon dark right>autorenew</v-icon>
+            </v-btn>
+            <v-btn color="blue" @click="editItem(props.item)" dark block small>
               Edit
-              <v-icon small dark right>edit</v-icon>
+              <v-icon dark right>edit</v-icon>
             </v-btn>
-            <v-btn small color="red" @click="deleteItem(props.item)" dark>
+            <v-btn color="red" @click="deleteItem(props.item)" dark block small>
               Delete
-              <v-icon small dark right>delete</v-icon>
+              <v-icon dark right>delete_forever</v-icon>
             </v-btn>
           </td>
-        </template>
-        <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
         </template>
       </v-data-table>
     </v-container>
@@ -187,7 +197,7 @@ export default {
           value: "id"
         },
         {
-          text: "Full Name",
+          text: "Customer Full Name",
           align: "left",
           sortable: false,
           value: "fullName"
@@ -219,12 +229,19 @@ export default {
           value: "membershipType",
           sortable: false
         },
+        {
+          text: "Membership Details",
+          align: "left",
+          value: "membershipDetails",
+          sortable: false
+        },
         { text: "Actions", align: "center", value: "name", sortable: false }
       ],
       date: new Date().toISOString().substr(0, 10),
       menu: false,
       editedID: "-1",
       selectedGender: { gender: "Male", code: 1 },
+      selectedMemberShipTypes: {},
       genders: [
         { gender: "Unknown", code: 0 },
         { gender: "Male", code: 1 },
@@ -242,7 +259,10 @@ export default {
         membershipTypeId: "1",
         dob: new Date().toISOString().substr(0, 10),
         phoneNumber: "",
-        emergencyPhoneNumbr: ""
+        emergencyPhoneNumbr: "",
+        membershipStart: "",
+        membershipEnd: "",
+        daysLeft: 0
       },
       defaultItem: {
         id: "",
@@ -255,7 +275,10 @@ export default {
         membershipTypeId: "1",
         dob: new Date().toISOString().substr(0, 10),
         phoneNumber: "",
-        emergencyPhoneNumbr: ""
+        emergencyPhoneNumbr: "",
+        membershipStart: "",
+        membershipEnd: "",
+        daysLeft: 0
       }
     };
   },
@@ -283,10 +306,10 @@ export default {
         .dispatch("apiCustomers/getCustomers")
         .then(() => {
           this.$store
-        .dispatch("apiMemberships/getMemberships")
-        .then(() => this.close())
-        .catch(err => console.log(err));
-          this.close();})
+            .dispatch("apiMemberships/getMemberships")
+            .catch(err => console.log(err));
+          this.close();
+        })
         .catch(err => console.log(err));
     },
     close: function() {
@@ -406,13 +429,102 @@ export default {
       );
       this.dialog = true;
     },
-
     deleteItem: function(item) {
       this.editedID = item.id;
       this.editedItem = Object.assign({}, item);
       confirm("Are you sure you want to delete this item?")
         ? this.deleteCustomer()
         : null;
+    },
+    checkInItem: function(id) {
+      this.$store
+        .dispatch("apiCustomers/checkInCustomer", id)
+        .then(() => {
+          this.initialize();
+          this.$store.dispatch("snackbar/fire", {
+            snackbarText: "Customer Checked In Successfully",
+            snackbarTimeout: 5000,
+            color: "success",
+            left: true,
+            right: false,
+            top: false,
+            bottom: true,
+            multiline: false,
+            vertical: false
+          });
+        })
+        .catch(err => {
+          if (err.response.data) {
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: err.response.data,
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          } else {
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Unkown error occured",
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          }
+        });
+    },
+    renewItem: function(id) {
+      this.$store
+        .dispatch("apiCustomers/renewCustomer", id)
+        .then(() => {
+          this.initialize();
+          this.$store.dispatch("snackbar/fire", {
+            snackbarText: "Customer Renewed In Successfully",
+            snackbarTimeout: 5000,
+            color: "success",
+            left: true,
+            right: false,
+            top: false,
+            bottom: true,
+            multiline: false,
+            vertical: false
+          });
+        })
+        .catch(err => {
+          if (err.response.data.message) {
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: err.response.data.message,
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          } else {
+            this.$store.dispatch("snackbar/fire", {
+              snackbarText: "Unkown error occured",
+              snackbarTimeout: 5000,
+              color: "error",
+              left: true,
+              right: false,
+              top: false,
+              bottom: true,
+              multiline: false,
+              vertical: false
+            });
+          }
+        });
     }
   }
 };

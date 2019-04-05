@@ -46,6 +46,24 @@ export default {
     },
     deleteCustomer_error(state) {
       state.status = "error";
+    },
+    checkInCustomer_request(state) {
+      state.status = "loading";
+    },
+    checkInCustomer_success(state) {
+      state.status = "success";
+    },
+    checkInCustomer_error(state) {
+      state.status = "error";
+    },
+    renewCustomer_request(state) {
+      state.status = "loading";
+    },
+    renewCustomer_success(state) {
+      state.status = "success";
+    },
+    renewCustomer_error(state) {
+      state.status = "error";
     }
   },
   actions: {
@@ -59,6 +77,7 @@ export default {
         address,
         membershipTypeId,
         dob,
+        age,
         phoneNumber,
         emergencyPhoneNumbr
       }
@@ -75,6 +94,7 @@ export default {
             address,
             membershipTypeId,
             dob,
+            age,
             phoneNumber,
             emergencyPhoneNumbr
           },
@@ -164,6 +184,40 @@ export default {
           })
           .catch(err => {
             commit("getCustomers_error");
+            reject(err);
+          });
+      });
+    },
+    checkInCustomer({ commit }, id) {
+      return new Promise((resolve, reject) => {
+        commit("checkInCustomer_request");
+        axios({
+          url: "https://localhost:44307/api/Customers/CheckIn/" + id,
+          method: "PUT"
+        })
+          .then(resp => {
+            commit("checkInCustomer_success", resp.data);
+            resolve(resp);
+          })
+          .catch(err => {
+            commit("checkInCustomer_error");
+            reject(err);
+          });
+      });
+    },
+    renewCustomer({ commit }, id) {
+      return new Promise((resolve, reject) => {
+        commit("renewCustomer_request");
+        axios({
+          url: "https://localhost:44307/api/customers/RenewMembership/" + id,
+          method: "PUT"
+        })
+          .then(resp => {
+            commit("renewCustomer_success", resp.data);
+            resolve(resp);
+          })
+          .catch(err => {
+            commit("renewCustomer_error");
             reject(err);
           });
       });
