@@ -364,7 +364,7 @@ export default {
     },
     pushCustomer: function() {
       if (this.$refs.form.validate()) {
-        return (this.snackbar = true);
+        this.snackbar = true;
       }
       this.loading = true;
       if (this.editedID === "-1") {
