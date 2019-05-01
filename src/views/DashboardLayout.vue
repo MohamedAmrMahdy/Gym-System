@@ -57,12 +57,6 @@ export default {
           path: "/dashboard"
         },
         {
-          icon: "account_circle",
-          title: "Profile",
-          subtitle: "show Your Profile",
-          path: "/dashboard/profile"
-        },
-        {
           divider: true
         },
         {
